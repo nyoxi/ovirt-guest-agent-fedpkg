@@ -1,5 +1,5 @@
 
-%global release_version 4
+%global release_version 5
 
 %global _moduledir /%{_lib}/security
 
@@ -43,6 +43,7 @@ Requires(preun): systemd
 Requires(postun): systemd
 %endif
 Provides: %{name} = %{version}-%{release}
+Obsoletes: %{name}
 
 # If selinux is installed and has a version lower than tested, our package
 # would not work as expected.
@@ -238,7 +239,10 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
-* Tue Feb 07 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-4
+* Thu Feb 14 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-5
+- ovirt-guest-agent-common obsoletes now ovirt-guest-agent
+
+* Thu Feb 07 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-4
 - Removal of unused global variable _kdmrc
 
 * Tue Jan 22 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-3
