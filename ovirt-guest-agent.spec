@@ -1,5 +1,5 @@
 
-%global release_version 5
+%global release_version 6
 
 %global _moduledir /%{_lib}/security
 
@@ -120,7 +120,7 @@ make install DESTDIR=%{buildroot}
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
 getent passwd ovirtagent > /dev/null || \
     /usr/sbin/useradd -u 175 -g 175 -o -r ovirtagent \
-    -c "oVirt Guest Agent" -d / -s /sbin/nologin
+    -c "oVirt Guest Agent" -d %{_datadir}/ovirt-guest-agent -s /sbin/nologin
 exit 0
 
 %post common
@@ -239,6 +239,10 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Feb 19 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-6
+- Using datadir as home directory
+  Resolves: BZ#883124
+
 * Thu Feb 14 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-5
 - ovirt-guest-agent-common obsoletes now ovirt-guest-agent
 
