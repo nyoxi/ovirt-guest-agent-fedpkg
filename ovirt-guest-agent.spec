@@ -1,21 +1,24 @@
 
-%global release_version 6
-
+%global release_version 1
+%global candidate alpha
+%global candidate_rel .%{?candidate}
+%global candidate_file -%{?candidate}
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.6
-Release: %{release_version}%{?dist}
+Version: 1.0.8
+Release: %{release_version}%{?candidate_rel}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://resources.ovirt.org/releases/3.2/src/%{name}-%{version}.tar.bz2
+Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}%{candidate_file}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
+BuildRequires: python-pep8
 %if 0%{?fedora} >= 18
 BuildRequires: systemd
 %else
@@ -37,6 +40,7 @@ Requires: python-ethtool >= 0.4-1
 Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
+Requires: python-pep8
 %if 0%{?fedora} >= 18
 Requires(post): systemd
 Requires(preun): systemd
@@ -59,19 +63,10 @@ Summary: PAM module for the oVirt Guest Agent
 Requires: %{name} = %{version}-%{release}
 Requires: pam
 
-%package gdm-plugin
-Summary: GDM plug-in for the oVirt Guest Agent
-BuildRequires: dbus-glib-devel
-BuildRequires: gdm-devel
-BuildRequires: gobject-introspection-devel
-BuildRequires: gtk2-devel
-Requires: %{name} = %{version}-%{release}
-Requires: %{name}-pam-module = %{version}-%{release}
-Requires: gdm
-
 %package kdm-plugin
 Summary: KDM plug-in for the oVirt Guest Agent
 BuildRequires: kdebase-workspace-devel
+BuildRequires: gcc-c++
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-pam-module = %{version}-%{release}
 Requires: kdm
@@ -94,10 +89,6 @@ restart).
 The oVirt PAM module provides the functionality necessary to use the
 oVirt automatic log-in system.
 
-%description gdm-plugin
-The GDM plug-in provides the functionality necessary to use the
-oVirt automatic log-in system.
-
 %description kdm-plugin
 The KDM plug-in provides the functionality necessary to use the
 oVirt automatic log-in system.
@@ -109,6 +100,7 @@ oVirt automatic log-in system.
 %configure \
     --enable-securedir=%{_moduledir} \
     --includedir=%{_includedir}/security \
+    --without-gdm \
     --with-pam-prefix=%{_sysconfdir}
 
 make %{?_smp_mflags}
@@ -148,7 +140,9 @@ then
     VIRTIO=`grep "^device" %{_sysconfdir}/ovirt-guest-agent.conf | awk '{ print $3; }'`
     if [ -w $VIRTIO ]
     then
-        echo '{ "__name__" : "uninstalled" }' >> $VIRTIO
+        # Non blocking uninstalled notification
+        echo -e '{"__name__": "uninstalled"}\n' | dd of=$VIRTIO \
+            oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
     fi
 fi
 
@@ -159,6 +153,7 @@ then
         /bin/systemctl daemon-reload
     %endif
 
+    # Let udev clear access rights
     /sbin/udevadm trigger --subsystem-match="virtio-ports" \
         --attr-match="name=com.redhat.rhevm.vdsm"
 fi
@@ -171,19 +166,6 @@ fi
     # New macro for F18+
     %systemd_postun_with_restart ovirt-guest-agent.service
 %endif
-
-%post gdm-plugin
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-
-%postun gdm-plugin
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-%posttrans gdm-plugin
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-
 
 %files common
 %dir %attr (755,ovirtagent,ovirtagent) %{_localstatedir}/log/ovirt-guest-agent
@@ -223,22 +205,26 @@ fi
 %exclude %{_moduledir}/pam_ovirt_cred.a
 %exclude %{_moduledir}/pam_ovirt_cred.la
 
-
-%files gdm-plugin
-%config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
-%{_datadir}/icons/hicolor/*/*/*.png
-%dir %{_datadir}/gdm/simple-greeter/extensions/ovirtcred
-%{_datadir}/gdm/simple-greeter/extensions/ovirtcred/page.ui
-%{_libdir}/gdm/simple-greeter/extensions/libovirtcred.so
-# Unwanted files
-%exclude %{_libdir}/gdm/simple-greeter/extensions/libovirtcred.a
-%exclude %{_libdir}/gdm/simple-greeter/extensions/libovirtcred.la
-
 %files kdm-plugin
 %config(noreplace) %{_sysconfdir}/pam.d/kdm-ovirtcred
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Thu Jul 11 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.8-1
+- Upgraded sources to upstream 1.0.8
+- Pep8 rules applied on python files
+- Call restorecon on pidfile
+- Report multiple IPv4 addresses per device if available
+- Send 'uninstalled' notification non blocking
+- fixed "modified" files after clone.
+- rewrote nic's addresses functions in python 2.4 syntax.
+- GNOME 3.8 no longer supports gdm plugins. Therefore it's now disabled for
+  higher versions
+- Added full qualified domain name reporting
+- Condrestart now ensures that the pid file does not only exist, but also is
+  not empty
+- Added new optional parameter for shutdown to allow reboot
+
 * Tue Feb 19 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.6-6
 - Using datadir as home directory
   Resolves: BZ#883124
