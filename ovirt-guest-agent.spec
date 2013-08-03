@@ -9,7 +9,7 @@
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.8
-Release: %{release_version}%{?candidate_rel}%{?dist}
+Release: %{release_version}%{?candidate_rel}%{?dist}.1
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -210,6 +210,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.8-1.alpha.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Thu Jul 11 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.8-1
 - Upgraded sources to upstream 1.0.8
 - Pep8 rules applied on python files
