@@ -199,11 +199,11 @@ fi
 
 %files pam-module
 %{_moduledir}/pam_ovirt_cred.so
-%config(noreplace) %{_sysconfdir}/pam.d/ovirtcred
 %exclude %{_moduledir}/pam_ovirt_cred.a
 %exclude %{_moduledir}/pam_ovirt_cred.la
 
 %files kdm-plugin
+%config(noreplace) %{_sysconfdir}/pam.d/kdm-ovirtcred
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
