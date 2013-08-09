@@ -1,20 +1,17 @@
 
 %global release_version 2
-#%global candidate alpha
-#%global candidate_rel .%{?candidate}
-#%global candidate_file -%{?candidate}
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.8
-Release: %{release_version}%{?candidate_rel}%{?dist}.1
+Release: %{release_version}%{?dist}.1
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}%{candidate_file}.tar.bz2
+Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
