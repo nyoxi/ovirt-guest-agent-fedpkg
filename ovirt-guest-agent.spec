@@ -1,6 +1,6 @@
 
-%global release_version 1
-%global candidate alpha
+%global release_version 2
+%global candidate
 %global candidate_rel .%{?candidate}
 %global candidate_file -%{?candidate}
 %global _moduledir /%{_lib}/security
@@ -210,6 +210,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Fri Aug 09 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.8-2
+- Updated to oVirt 3.3 ovirt-guest-agent 1.0.8 released sources
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.8-1.alpha.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
