@@ -1,8 +1,8 @@
 
 %global release_version 2
-%global candidate
-%global candidate_rel .%{?candidate}
-%global candidate_file -%{?candidate}
+#%global candidate alpha
+#%global candidate_rel .%{?candidate}
+#%global candidate_file -%{?candidate}
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
