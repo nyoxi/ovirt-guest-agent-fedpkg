@@ -1,5 +1,5 @@
 
-%global release_version 2
+%global release_version 1
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
