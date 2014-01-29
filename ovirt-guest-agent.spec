@@ -5,8 +5,8 @@
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.8
-Release: %{release_version}%{?dist}.1
+Version: 1.0.9
+Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -68,6 +68,19 @@ Requires: %{name} = %{version}-%{release}
 Requires: %{name}-pam-module = %{version}-%{release}
 Requires: kdm
 
+%if 0%{?fedora} >= 20
+%package gdm-plugin
+Summary: Files for the GDM plug-in of the oVirt Guest Agent
+Requires: %{name} = %{version}-%{release}
+Requires: %{name}-pam-module = %{version}-%{release}
+Requires: gdm
+Requires: gnome-shell
+
+%description gdm-plugin
+Files required for the GDM extension to use the oVirt automatic log-in
+system
+%endif
+
 %description
 This is the oVirt management agent running inside the guest. The agent
 interfaces with the oVirt manager, supplying heart-beat info as well as
@@ -104,6 +117,8 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=%{buildroot}
+cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
+
 
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
@@ -202,11 +217,19 @@ fi
 %exclude %{_moduledir}/pam_ovirt_cred.a
 %exclude %{_moduledir}/pam_ovirt_cred.la
 
+%file gdm-plugin
+%config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
+
 %files kdm-plugin
 %config(noreplace) %{_sysconfdir}/pam.d/kdm-ovirtcred
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Mon Jan 20 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-1
+- Report swap usage of guests
+- Updated pam conversation approach
+- Python 2.4 compatability fix
+
 * Fri Aug 09 2013 Vinzenz Feenstra <vfeenstr@redhat.com> - 1.0.8-2
 - Updated to oVirt 3.3 ovirt-guest-agent 1.0.8 released sources
 
