@@ -220,7 +220,7 @@ fi
 %exclude %{_moduledir}/pam_ovirt_cred.a
 %exclude %{_moduledir}/pam_ovirt_cred.la
 
-%file gdm-plugin
+%files gdm-plugin
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %files kdm-plugin
