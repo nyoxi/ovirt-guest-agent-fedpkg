@@ -1,5 +1,5 @@
 
-%global release_version 2
+%global release_version 3
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
@@ -72,6 +72,7 @@ Requires: kdm
 %if 0%{?fedora} >= 20
 %package gdm-plugin
 Summary: Files for the GDM plug-in of the oVirt Guest Agent
+BuildArch: noarch
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-pam-module = %{version}-%{release}
 Requires: gdm
@@ -227,6 +228,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Mon Mar 31 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-3
+- The ovirt-guest-agent-gdm-plugin is now noarch
+
 * Mon Mar 31 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-2
 - Support for logind based session locking
 
