@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
@@ -12,6 +12,7 @@ Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
 Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
+Patch1: 0001-Implementation-of-logind-based-session-locking.patch
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -105,6 +106,7 @@ oVirt automatic log-in system.
 
 %prep
 %setup -q -n ovirt-guest-agent-%{version}
+%patch1 -p1
 
 %build
 %configure \
@@ -225,6 +227,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Mon Mar 31 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-2
+- Support for logind based session locking
+
 * Mon Jan 20 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-1
 - Report swap usage of guests
 - Updated pam conversation approach
