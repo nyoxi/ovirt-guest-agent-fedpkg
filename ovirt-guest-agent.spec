@@ -17,11 +17,7 @@ BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
 BuildRequires: python-pep8
-%if 0%{?fedora} >= 18
 BuildRequires: systemd
-%else
-BuildRequires: systemd-units
-%endif
 Requires: %{name}-common = %{version}-%{release}
 
 # The ovirt-guest-agent main package is empty.
@@ -39,22 +35,15 @@ Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
 Requires: python-pep8
-%if 0%{?fedora} >= 18
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-%endif
 Provides: %{name} = %{version}-%{release}
 Obsoletes: %{name}
 
 # If selinux is installed and has a version lower than tested, our package
 # would not work as expected.
-%if 0%{?fc16}
-Conflicts: selinux-policy < 3.10.0-77
-%endif
-%if 0%{?fedora} >= 17
 Conflicts: selinux-policy < 3.10.0-89
-%endif
 
 %package pam-module
 Summary: PAM module for the oVirt Guest Agent
@@ -69,7 +58,6 @@ Requires: %{name} = %{version}-%{release}
 Requires: %{name}-pam-module = %{version}-%{release}
 Requires: kdm
 
-%if 0%{?fedora} >= 20
 %package gdm-plugin
 Summary: Files for the GDM plug-in of the oVirt Guest Agent
 BuildArch: noarch
@@ -81,7 +69,6 @@ Requires: gnome-shell
 %description gdm-plugin
 Files required for the GDM extension to use the oVirt automatic log-in
 system
-%endif
 
 %description
 This is the oVirt management agent running inside the guest. The agent
@@ -134,22 +121,12 @@ exit 0
 /sbin/udevadm trigger --subsystem-match="virtio-ports" \
     --attr-match="name=com.redhat.rhevm.vdsm"
 
-%if 0%{?fedora} < 18
-    /bin/systemctl daemon-reload
-%else
-    # New macro for F18+
-    %systemd_post ovirt-guest-agent.service
-%endif
+%systemd_post ovirt-guest-agent.service
 
 %preun common
 if [ "$1" -eq 0 ]
 then
-    %if 0%{?fedora} < 18
-        /bin/systemctl stop ovirt-guest-agent.service > /dev/null 2>&1
-    %else
-        # New macro for F18+
-        %systemd_preun ovirt-guest-agent.service
-    %endif
+    %systemd_preun ovirt-guest-agent.service
 
     # Send an "uninstalled" notification to vdsm.
     VIRTIO=`grep "^device" %{_sysconfdir}/ovirt-guest-agent.conf | awk '{ print $3; }'`
@@ -164,23 +141,13 @@ fi
 %postun common
 if [ "$1" -eq 0 ]
 then
-    %if 0%{?fedora} < 17
-        /bin/systemctl daemon-reload
-    %endif
-
     # Let udev clear access rights
     /sbin/udevadm trigger --subsystem-match="virtio-ports" \
         --attr-match="name=com.redhat.rhevm.vdsm"
 fi
 
-%if 0%{?fedora} < 18
-    if [ "$1" -ge 1 ]; then
-        /bin/systemctl try-restart ovirt-guest-agent.service >/dev/null 2>&1 || :
-    fi
-%else
-    # New macro for F18+
-    %systemd_postun_with_restart ovirt-guest-agent.service
-%endif
+# New macro for F18+
+%systemd_postun_with_restart ovirt-guest-agent.service
 
 %files common
 %dir %attr (755,ovirtagent,ovirtagent) %{_localstatedir}/log/ovirt-guest-agent
