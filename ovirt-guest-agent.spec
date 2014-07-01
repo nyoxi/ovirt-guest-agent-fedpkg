@@ -1,18 +1,17 @@
 
-%global release_version 3
+%global release_version 1
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.9
+Version: 1.0.10
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
 Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
-Patch1: 0001-Implementation-of-logind-based-session-locking.patch
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -107,7 +106,6 @@ oVirt automatic log-in system.
 
 %prep
 %setup -q -n ovirt-guest-agent-%{version}
-%patch1 -p1
 
 %build
 %configure \
@@ -228,6 +226,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Jul 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-1
+- Update to upstream version 1.0.10
+
 * Mon Mar 31 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-3
 - The ovirt-guest-agent-gdm-plugin is now noarch
 
