@@ -86,7 +86,7 @@ oVirt automatic log-in system.
 %configure \
     --enable-securedir=%{_moduledir} \
     --includedir=%{_includedir}/security \
-    --without-gdm \
+    --without-gdm --without-kdm \
     --with-pam-prefix=%{_sysconfdir}
 
 make %{?_smp_mflags}
