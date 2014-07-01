@@ -1,18 +1,17 @@
 
-%global release_version 3
+%global release_version 1
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.9
+Version: 1.0.10
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
 Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
-Patch1: 0001-Implementation-of-logind-based-session-locking.patch
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -50,14 +49,6 @@ Summary: PAM module for the oVirt Guest Agent
 Requires: %{name} = %{version}-%{release}
 Requires: pam
 
-%package kdm-plugin
-Summary: KDM plug-in for the oVirt Guest Agent
-BuildRequires: kdebase-workspace-devel
-BuildRequires: gcc-c++
-Requires: %{name} = %{version}-%{release}
-Requires: %{name}-pam-module = %{version}-%{release}
-Requires: kdm
-
 %package gdm-plugin
 Summary: Files for the GDM plug-in of the oVirt Guest Agent
 BuildArch: noarch
@@ -88,13 +79,8 @@ restart).
 The oVirt PAM module provides the functionality necessary to use the
 oVirt automatic log-in system.
 
-%description kdm-plugin
-The KDM plug-in provides the functionality necessary to use the
-oVirt automatic log-in system.
-
 %prep
 %setup -q -n ovirt-guest-agent-%{version}
-%patch1 -p1
 
 %build
 %configure \
@@ -168,6 +154,9 @@ fi
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
 
+%attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
+%attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
+
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
 %{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
 %{_datadir}/ovirt-guest-agent/CredServer.py*
@@ -190,11 +179,10 @@ fi
 %files gdm-plugin
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
-%files kdm-plugin
-%config(noreplace) %{_sysconfdir}/pam.d/kdm-ovirtcred
-%attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
-
 %changelog
+* Tue Jul 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-1
+- Udated to upstream 1.0.10 sources
+
 * Mon Mar 31 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.9-3
 - The ovirt-guest-agent-gdm-plugin is now noarch
 
