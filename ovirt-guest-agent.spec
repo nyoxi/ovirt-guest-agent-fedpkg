@@ -199,10 +199,12 @@ fi
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
 
-%{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
-%{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
+%attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
+%attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
 %{_datadir}/ovirt-guest-agent/CredServer.py*
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
+%{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
+%{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
 %{_datadir}/ovirt-guest-agent/ovirt-locksession
 %{_datadir}/ovirt-guest-agent/ovirt-shutdown
 %{_datadir}/ovirt-guest-agent/ovirt-hibernate
