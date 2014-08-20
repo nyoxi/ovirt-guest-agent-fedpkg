@@ -1,6 +1,7 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
+%global ovirt_version 1.0.10.1
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
@@ -11,7 +12,7 @@ Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
+Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{ovirt-version}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -34,6 +35,7 @@ Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
 Requires: python-pep8
+Requires: qemu-guest-agent
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
@@ -80,7 +82,7 @@ The oVirt PAM module provides the functionality necessary to use the
 oVirt automatic log-in system.
 
 %prep
-%setup -q -n ovirt-guest-agent-%{version}
+%setup -q -n ovirt-guest-agent-%{ovirt-version}
 
 %build
 %configure \
@@ -108,6 +110,7 @@ exit 0
     --attr-match="name=com.redhat.rhevm.vdsm"
 
 %systemd_post ovirt-guest-agent.service
+systemctl enable ovirt-guest-agent.service ||:
 
 %preun common
 if [ "$1" -eq 0 ]
@@ -180,6 +183,11 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Wed Aug 20 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-2
+- Udated to upstream 1.0.10.1 sources
+- Auto enable ovirt-guest-agent service RHBZ#1130983
+- Depend on qemu-guest-agent RHBZ#1131142
+
 * Tue Jul 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-1
 - Udated to upstream 1.0.10 sources
 
