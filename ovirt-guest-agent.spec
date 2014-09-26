@@ -1,12 +1,12 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.10
-Release: %{release_version}%{?dist}.1
+Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -37,7 +37,6 @@ Requires: python-ethtool >= 0.4-1
 Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
-Requires: python-pep8
 %if 0%{?fedora} >= 18
 Requires(post): systemd
 Requires(preun): systemd
@@ -228,6 +227,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Fri Sep 26 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-2
+- Removed unnecessary runtime dependency on python-pep8
+
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org>
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
