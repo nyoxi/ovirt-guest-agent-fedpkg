@@ -37,7 +37,6 @@ Requires: python-ethtool >= 0.4-1
 Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
-Requires: python-pep8
 %if 0%{?fedora} >= 18
 Requires(post): systemd
 Requires(preun): systemd
