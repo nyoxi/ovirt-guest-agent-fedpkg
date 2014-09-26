@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
@@ -227,6 +227,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Fri Sep 26 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-2
+- Removed unnecessary runtime dependency on python-pep8
+
 * Tue Jul 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-1
 - Update to upstream version 1.0.10
 
