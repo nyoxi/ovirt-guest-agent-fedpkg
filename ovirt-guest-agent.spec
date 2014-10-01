@@ -1,18 +1,17 @@
 
-%global release_version 2
+%global release_version 1
 %global _moduledir /%{_lib}/security
-%global ovirt_version 1.0.10.1
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.10
+Version: 1.0.10.2
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{ovirt_version}.tar.bz2
+Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -34,7 +33,6 @@ Requires: python-ethtool >= 0.4-1
 Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
-Requires: python-pep8
 Requires: qemu-guest-agent
 Requires(post): systemd
 Requires(preun): systemd
@@ -82,7 +80,7 @@ The oVirt PAM module provides the functionality necessary to use the
 oVirt automatic log-in system.
 
 %prep
-%setup -q -n ovirt-guest-agent-%{ovirt_version}
+%setup -q -n ovirt-guest-agent-%{version}
 
 %build
 %configure \
@@ -160,10 +158,11 @@ fi
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
 
-%{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
-%{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper
 %{_datadir}/ovirt-guest-agent/CredServer.py*
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
+%{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
+%{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
 %{_datadir}/ovirt-guest-agent/ovirt-locksession
 %{_datadir}/ovirt-guest-agent/ovirt-shutdown
 %{_datadir}/ovirt-guest-agent/ovirt-hibernate
@@ -183,6 +182,9 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Wed Oct 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10.2-1
+- Update to latest upstream release
+
 * Wed Aug 20 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10-2
 - Udated to upstream 1.0.10.1 sources
 - Auto enable ovirt-guest-agent service RHBZ#1130983
