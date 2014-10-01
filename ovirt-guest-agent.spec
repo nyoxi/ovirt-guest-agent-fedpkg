@@ -200,6 +200,8 @@ fi
 
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
+
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper
 %{_datadir}/ovirt-guest-agent/CredServer.py*
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
