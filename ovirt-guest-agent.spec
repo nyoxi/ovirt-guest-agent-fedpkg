@@ -6,7 +6,7 @@
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.10.2
-Release: %{release_version}%{?dist}
+Release: %{release_version}%{?dist}.1
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -229,6 +229,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 1.0.10.2-1.1
+- Rebuilt for GCC 5 C++11 ABI change
+
 * Wed Oct 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10.2-1
 - Update to latest upstream release
 
