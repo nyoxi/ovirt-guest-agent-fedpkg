@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
@@ -16,6 +16,7 @@ BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
 BuildRequires: python-pep8
+BuildRequires: udev
 %if 0%{?fedora} >= 18
 BuildRequires: systemd
 %else
@@ -118,7 +119,8 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=%{buildroot}
 cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
-
+mkdir -p %{buildroot}%{_udevrulesdir}
+mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
 
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
@@ -190,7 +192,7 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
-%config(noreplace) %attr (644,root,root) %{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules
+%config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-shutdown
@@ -229,6 +231,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Mon Jun 01 2015 Kalev Lember <evilissimo@redhat.com> - 1.0.10.2-2
+- Utilize _udevrulesdir macro for rules installation
+
 * Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 1.0.10.2-1.1
 - Rebuilt for GCC 5 C++11 ABI change
 
