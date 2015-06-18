@@ -6,7 +6,7 @@
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.10.2
-Release: %{release_version}%{?dist}.1
+Release: %{release_version}%{?dist}.2
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -231,6 +231,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.10.2-2.2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon Jun 01 2015 Kalev Lember <evilissimo@redhat.com> - 1.0.10.2-2
 - Utilize _udevrulesdir macro for rules installation
 
