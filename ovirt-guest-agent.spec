@@ -1,11 +1,11 @@
 
-%global release_version 2
+%global release_version 1
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.10.2
+Version: 1.0.11
 Release: %{release_version}%{?dist}.2
 Summary: The oVirt Guest Agent
 Group: Applications/System
@@ -231,10 +231,13 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
+- Bump to upstream version 1.0.11
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.10.2-2.2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
-* Mon Jun 01 2015 Kalev Lember <evilissimo@redhat.com> - 1.0.10.2-2
+* Mon Jun 01 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10.2-2
 - Utilize _udevrulesdir macro for rules installation
 
 * Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 1.0.10.2-1.1
