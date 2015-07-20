@@ -192,11 +192,13 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
 %config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-hibernate
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
 
