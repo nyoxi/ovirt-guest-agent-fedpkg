@@ -216,7 +216,7 @@ fi
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveSession.py*
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveUser.py*
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/LogoutActiveUser.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/hibernate
 
 %{_unitdir}/ovirt-guest-agent.service
