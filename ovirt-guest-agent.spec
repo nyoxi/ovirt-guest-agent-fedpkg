@@ -208,11 +208,15 @@ fi
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
 %{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
+%{_datadir}/ovirt-guest-agent/timezone.py*
 %{_datadir}/ovirt-guest-agent/ovirt-locksession
 %{_datadir}/ovirt-guest-agent/ovirt-shutdown
 %{_datadir}/ovirt-guest-agent/ovirt-hibernate
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-logout
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveSession.py*
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveUser.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/hibernate
 
 %{_unitdir}/ovirt-guest-agent.service
