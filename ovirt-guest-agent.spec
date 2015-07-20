@@ -5,7 +5,7 @@
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.10.2
+Version: 1.0.11
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
@@ -94,7 +94,8 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=%{buildroot}
 cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
-
+mkdir -p %{buildroot}%{_udevrulesdir}
+mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
 
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
@@ -147,11 +148,13 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
-%config(noreplace) %attr (644,root,root) %{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
+%config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-hibernate
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
 
@@ -163,11 +166,15 @@ fi
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
 %{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
+%{_datadir}/ovirt-guest-agent/timezone.py*
 %{_datadir}/ovirt-guest-agent/ovirt-locksession
 %{_datadir}/ovirt-guest-agent/ovirt-shutdown
 %{_datadir}/ovirt-guest-agent/ovirt-hibernate
+%{_datadir}/ovirt-guest-agent/ovirt-logout
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveSession.py*
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/LogoutActiveUser.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/hibernate
 
 %{_unitdir}/ovirt-guest-agent.service
@@ -182,6 +189,9 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
+- Bump to upstream version 1.0.11
+
 * Wed Oct 01 2014 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.10.2-1
 - Update to latest upstream release
 
