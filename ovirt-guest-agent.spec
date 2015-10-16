@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 
 # Note this is not building any package
@@ -122,6 +122,18 @@ cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
 mkdir -p %{buildroot}%{_udevrulesdir}
 mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
 
+# Ensure we're elevating the guest agent diskmapper tool
+# This is done by replacing the original with a symlink to consolehelper
+# and renaming the original before hand to diskmapper.script
+# Then we install the necessary console.apps script which points to the renamed
+# original and also copy the necessary pam configuration
+cp %{buildroot}%{_sysconfdir}/security/console.apps/{ovirt-logout,diskmapper}
+cp %{buildroot}%{_sysconfdir}/pam.d/{ovirt-logout,diskmapper}
+sed -i "s/LogoutActiveUser.py/diskmapper.script/g" %{buildroot}%{_sysconfdir}/security/console.apps/diskmapper
+mv %{buildroot}%{_datadir}/ovirt-guest-agent/diskmapper{,.script}
+ln -sf /usr/bin/consolehelper %{buildroot}%{_datadir}/ovirt-guest-agent/diskmapper
+
+
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
 getent passwd ovirtagent > /dev/null || \
@@ -237,6 +249,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Wed Oct 14 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-2
+- BZ#1271167 - Execute diskmapper elevated or it won't be working
+
 * Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
 - Bump to upstream version 1.0.11
 
