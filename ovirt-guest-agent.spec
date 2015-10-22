@@ -1,6 +1,7 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
+%global _ovirt_version 1.0.11.1
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
@@ -11,7 +12,7 @@ Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
+Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{_ovirt_version}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -105,7 +106,7 @@ The KDM plug-in provides the functionality necessary to use the
 oVirt automatic log-in system.
 
 %prep
-%setup -q -n ovirt-guest-agent-%{version}
+%setup -q -n ovirt-guest-agent-%{_ovirt_version}
 
 %build
 %configure \
@@ -237,6 +238,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Thu Oct 22 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-2
+- Bump to upstream version 1.0.11.1
+
 * Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
 - Bump to upstream version 1.0.11
 
