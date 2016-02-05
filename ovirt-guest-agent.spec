@@ -45,7 +45,6 @@ Requires(preun): systemd
 Requires(postun): systemd
 %endif
 Provides: %{name} = %{version}-%{release}
-Obsoletes: %{name}
 
 # If selinux is installed and has a version lower than tested, our package
 # would not work as expected.
@@ -122,6 +121,9 @@ make install DESTDIR=%{buildroot}
 cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
 mkdir -p %{buildroot}%{_udevrulesdir}
 mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
+sed '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py > %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py
+touch %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py.new
+mv %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py{.new,}
 
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
