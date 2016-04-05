@@ -1,6 +1,7 @@
 
-%global release_version 1
+%global release_version 3
 %global _moduledir /%{_lib}/security
+%global _ovirt_version 1.0.11.3
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
@@ -189,6 +190,9 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Tue Apr 05 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-3
+- Bump to upstream version 1.0.11.3
+
 * Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
 - Bump to upstream version 1.0.11
 
