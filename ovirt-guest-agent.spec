@@ -12,7 +12,7 @@ Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{version}.tar.bz2
+Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{_ovirt_version}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -81,7 +81,7 @@ The oVirt PAM module provides the functionality necessary to use the
 oVirt automatic log-in system.
 
 %prep
-%setup -q -n ovirt-guest-agent-%{version}
+%setup -q -n ovirt-guest-agent-%{_ovirt_version}
 
 %build
 %configure \
