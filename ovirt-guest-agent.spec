@@ -1,7 +1,7 @@
 
-%global release_version 2
+%global release_version 3
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.11.1
+%global _ovirt_version 1.0.11.3
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
@@ -240,6 +240,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Apr 05 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-3
+- Bump to upstream version 1.0.11.3
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.11-2.3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
