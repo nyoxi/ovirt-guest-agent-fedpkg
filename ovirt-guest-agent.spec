@@ -125,6 +125,18 @@ sed '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{_datadir}/ovirt-guest-agent/ti
 touch %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py.new
 mv %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py{.new,}
 
+# Ensure we're elevating the guest agent diskmapper tool
+# This is done by replacing the original with a symlink to consolehelper
+# and renaming the original before hand to diskmapper.script
+# Then we install the necessary console.apps script which points to the renamed
+# original and also copy the necessary pam configuration
+cp %{buildroot}%{_sysconfdir}/security/console.apps/{ovirt-logout,diskmapper}
+cp %{buildroot}%{_sysconfdir}/pam.d/{ovirt-logout,diskmapper}
+sed -i "s/LogoutActiveUser.py/diskmapper.script/g" %{buildroot}%{_sysconfdir}/security/console.apps/diskmapper
+mv %{buildroot}%{_datadir}/ovirt-guest-agent/diskmapper{,.script}
+ln -sf /usr/bin/consolehelper %{buildroot}%{_datadir}/ovirt-guest-agent/diskmapper
+
+
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
 getent passwd ovirtagent > /dev/null || \
@@ -196,19 +208,22 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
+%config(noreplace) %{_sysconfdir}/pam.d/diskmapper
 %config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-hibernate
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
+%config(noreplace) %{_sysconfdir}/security/console.apps/diskmapper
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
 
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
 
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper.script
+%{_datadir}/ovirt-guest-agent/diskmapper
 %{_datadir}/ovirt-guest-agent/CredServer.py*
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
@@ -248,6 +263,7 @@ fi
 
 * Thu Oct 22 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-2
 - Bump to upstream version 1.0.11.1
+- BZ#1271167 - Execute diskmapper elevated or it won't be working
 
 * Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
 - Bump to upstream version 1.0.11
