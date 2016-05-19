@@ -1,12 +1,12 @@
 
-%global release_version 3
+%global release_version 1
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.11.3
+%global _ovirt_version 1.0.12
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.11
+Version: 1.0.12
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
@@ -291,6 +291,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Thu May 19 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-1
+- Bump to upstream version 1.0.12
+
 * Tue Apr 05 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-3
 - Bump to upstream version 1.0.11.3
 
