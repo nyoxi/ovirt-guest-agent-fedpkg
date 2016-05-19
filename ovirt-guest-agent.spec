@@ -1,12 +1,12 @@
 
-%global release_version 3
+%global release_version 1
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.11.3
+%global _ovirt_version 1.0.12
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.11
+Version: 1.0.12
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
@@ -39,7 +39,6 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Provides: %{name} = %{version}-%{release}
-Obsoletes: %{name}
 
 # If selinux is installed and has a version lower than tested, our package
 # would not work as expected.
@@ -97,6 +96,21 @@ make install DESTDIR=%{buildroot}
 cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
 mkdir -p %{buildroot}%{_udevrulesdir}
 mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
+sed '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py > %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py
+touch %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py.new
+mv %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py{.new,}
+
+# Ensure we're elevating the guest agent diskmapper tool
+# This is done by replacing the original with a symlink to consolehelper
+# and renaming the original before hand to diskmapper.script
+# Then we install the necessary console.apps script which points to the renamed
+# original and also copy the necessary pam configuration
+cp %{buildroot}%{_sysconfdir}/security/console.apps/{ovirt-logout,diskmapper}
+cp %{buildroot}%{_sysconfdir}/pam.d/{ovirt-logout,diskmapper}
+sed -i "s/LogoutActiveUser.py/diskmapper.script/g" %{buildroot}%{_sysconfdir}/security/console.apps/diskmapper
+mv %{buildroot}%{_datadir}/ovirt-guest-agent/diskmapper{,.script}
+ln -sf /usr/bin/consolehelper %{buildroot}%{_datadir}/ovirt-guest-agent/diskmapper
+
 
 %pre common
 getent group ovirtagent >/dev/null || groupadd -r -g 175 ovirtagent
@@ -142,41 +156,81 @@ fi
 %dir %attr (755,ovirtagent,ovirtagent) %{_localstatedir}/log/ovirt-guest-agent
 %dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent
 
+# Hook configuration directories
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_migration
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/after_migration
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_hibernation
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/after_hibernation
+
+# Hook installation directories
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/defaults
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_migration
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/after_migration
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_hibernation
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/after_hibernation
+
 %config(noreplace) %{_sysconfdir}/ovirt-guest-agent.conf
 
 %doc AUTHORS COPYING NEWS README
 
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-locksession
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-container-list
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
-%config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-flush-caches
+%config(noreplace) %{_sysconfdir}/pam.d/diskmapper
 %config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-container-list
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-hibernate
-%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-flush-caches
+%config(noreplace) %{_sysconfdir}/security/console.apps/diskmapper
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
+
+%{_datadir}/ovirt-guest-agent/scripts/hooks/defaults/55-flush-caches
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/defaults/55-flush-caches.consolehelper
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/defaults/flush-caches
 
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
 
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper.script
 %{_datadir}/ovirt-guest-agent/CredServer.py*
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
 %{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
 %{_datadir}/ovirt-guest-agent/timezone.py*
+%{_datadir}/ovirt-guest-agent/hooks.py*
+
+# consolehelper symlinks
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
+%{_datadir}/ovirt-guest-agent/diskmapper
+%{_datadir}/ovirt-guest-agent/ovirt-logout
+%{_datadir}/ovirt-guest-agent/ovirt-flush-caches
 %{_datadir}/ovirt-guest-agent/ovirt-locksession
 %{_datadir}/ovirt-guest-agent/ovirt-shutdown
 %{_datadir}/ovirt-guest-agent/ovirt-hibernate
-%{_datadir}/ovirt-guest-agent/ovirt-logout
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
+%{_datadir}/ovirt-guest-agent/ovirt-container-list
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveSession.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LogoutActiveUser.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/hibernate
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/container-list
+
+# Symlinks for the default hooks
+%config(noreplace) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_hibernation/55_flush-caches
+%config(noreplace) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_migration/55_flush-caches
+%config(noreplace) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_hibernation/55_flush-caches
+%config(noreplace) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_migration/55_flush-caches
 
 %{_unitdir}/ovirt-guest-agent.service
 
@@ -190,8 +244,18 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Thu May 19 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-1
+- Bump to upstream version 1.0.12
+
 * Tue Apr 05 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-3
 - Bump to upstream version 1.0.11.3
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.11-2.3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Thu Oct 22 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-2
+- Bump to upstream version 1.0.11.1
+- BZ#1271167 - Execute diskmapper elevated or it won't be working
 
 * Mon Jul 20 2015 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.11-1
 - Bump to upstream version 1.0.11
