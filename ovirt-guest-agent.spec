@@ -200,44 +200,80 @@ fi
 %dir %attr (755,ovirtagent,ovirtagent) %{_localstatedir}/log/ovirt-guest-agent
 %dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent
 
+# Hook configuration directories
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_migration
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/after_migration
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_hibernation
+%dir %attr (755,root,root) %{_sysconfdir}/ovirt-guest-agent/hooks.d/after_hibernation
+
+# Hook installation directories
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/defaults
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_migration
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/after_migration
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_hibernation
+%dir %attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/after_hibernation
+
 %config(noreplace) %{_sysconfdir}/ovirt-guest-agent.conf
 
 %doc AUTHORS COPYING NEWS README
 
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-locksession
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-container-list
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
-%config(noreplace) %{_sysconfdir}/pam.d/ovirt-logout
+%config(noreplace) %{_sysconfdir}/pam.d/ovirt-flush-caches
 %config(noreplace) %{_sysconfdir}/pam.d/diskmapper
 %config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-container-list
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-shutdown
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-hibernate
-%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
+%config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-flush-caches
 %config(noreplace) %{_sysconfdir}/security/console.apps/diskmapper
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-guest-agent.py*
+
+%{_datadir}/ovirt-guest-agent/scripts/hooks/defaults/55-flush-caches
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/defaults/55-flush-caches.consolehelper
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/scripts/hooks/defaults/flush-caches
 
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default.conf
 %attr (644,root,root) %{_datadir}/ovirt-guest-agent/default-logger.conf
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper.script
-%{_datadir}/ovirt-guest-agent/diskmapper
 %{_datadir}/ovirt-guest-agent/CredServer.py*
 %{_datadir}/ovirt-guest-agent/GuestAgentLinux2.py*
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
 %{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
 %{_datadir}/ovirt-guest-agent/timezone.py*
-%{_datadir}/ovirt-guest-agent/ovirt-locksession
-%{_datadir}/ovirt-guest-agent/ovirt-shutdown
-%{_datadir}/ovirt-guest-agent/ovirt-hibernate
-%{_datadir}/ovirt-guest-agent/ovirt-logout
+
+# consolehelper symlinks
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-logout
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-flush-caches
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-locksession
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-shutdown
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-hibernate
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-container-list
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveSession.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LogoutActiveUser.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/hibernate
+%attr (755,root,root) %{_datadir}/ovirt-guest-agent/container-list
+
+# Symlinks for the default hooks
+%config(noreplace) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_hibernation/55_flush-caches
+%config(noreplace) %{_datadir}/ovirt-guest-agent/scripts/hooks/before_migration/55_flush-caches
+%config(noreplace) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_hibernation/55_flush-caches
+%config(noreplace) %{_sysconfdir}/ovirt-guest-agent/hooks.d/before_migration/55_flush-caches
 
 %{_unitdir}/ovirt-guest-agent.service
 
