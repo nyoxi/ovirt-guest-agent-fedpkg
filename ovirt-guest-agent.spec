@@ -256,13 +256,13 @@ fi
 
 # consolehelper symlinks
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/diskmapper
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-logout
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-flush-caches
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-locksession
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-shutdown
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-hibernate
-%attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-container-list
+%{_datadir}/ovirt-guest-agent/diskmapper
+%{_datadir}/ovirt-guest-agent/ovirt-logout
+%{_datadir}/ovirt-guest-agent/ovirt-flush-caches
+%{_datadir}/ovirt-guest-agent/ovirt-locksession
+%{_datadir}/ovirt-guest-agent/ovirt-shutdown
+%{_datadir}/ovirt-guest-agent/ovirt-hibernate
+%{_datadir}/ovirt-guest-agent/ovirt-container-list
 
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LockActiveSession.py*
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/LogoutActiveUser.py*
