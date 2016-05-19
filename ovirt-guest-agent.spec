@@ -253,6 +253,7 @@ fi
 %{_datadir}/ovirt-guest-agent/OVirtAgentLogic.py*
 %{_datadir}/ovirt-guest-agent/VirtIoChannel.py*
 %{_datadir}/ovirt-guest-agent/timezone.py*
+%{_datadir}/ovirt-guest-agent/hooks.py*
 
 # consolehelper symlinks
 %attr (755,root,root) %{_datadir}/ovirt-guest-agent/ovirt-osinfo
