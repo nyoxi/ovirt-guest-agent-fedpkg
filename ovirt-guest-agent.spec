@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 %global _ovirt_version 1.0.12
 
@@ -121,8 +121,7 @@ make install DESTDIR=%{buildroot}
 cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
 mkdir -p %{buildroot}%{_udevrulesdir}
 mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
-sed '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py > %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py
-touch %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py.new
+sed '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py > %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py.new
 mv %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py{.new,}
 
 # Ensure we're elevating the guest agent diskmapper tool
@@ -292,6 +291,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Mon May 23 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-2
+- Fixed the timezone issue which was introduced during packaging
+
 * Thu May 19 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-1
 - Bump to upstream version 1.0.12
 
