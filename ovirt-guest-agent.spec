@@ -1,7 +1,7 @@
 
-%global release_version 2
+%global release_version 3
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.12
+%global _ovirt_version 1.0.12.1
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
@@ -291,6 +291,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Jun 21 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-3
+- Bump to upstream version 1.0.12.1
+
 * Mon May 23 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-2
 - Fixed the timezone issue which was introduced during packaging
 
