@@ -1,7 +1,7 @@
 
-%global release_version 3
+%global release_version 4
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.12.1
+%global _ovirt_version 1.0.12.2
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
@@ -34,6 +34,7 @@ Requires: %{name}-common = %{version}-%{release}
 Summary: Commonly used files of the oVirt Guest Agent
 BuildArch: noarch
 Requires: dbus-python
+Requires: pygobject2
 Requires: rpm-python
 Requires: python-ethtool >= 0.4-1
 Requires: udev >= 095-14.23
@@ -291,6 +292,10 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Jul 26 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-4
+- Bump to upstream version 1.0.12.2
+- Fix for dependency issue - Missing dependency pygobject2
+
 * Tue Jun 21 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-3
 - Bump to upstream version 1.0.12.1
 
