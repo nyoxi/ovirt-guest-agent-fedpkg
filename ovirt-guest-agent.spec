@@ -1,12 +1,12 @@
 
-%global release_version 4
+%global release_version 1
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.12.2
+%global _ovirt_version 1.0.13
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.12
+Version: 1.0.13
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
@@ -292,6 +292,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Feb 07 2017 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.13-1
+- Bump to upstream version 1.0.13
+
 * Tue Jul 26 2016 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.12-4
 - Bump to upstream version 1.0.12.2
 - Fix for dependency issue - Missing dependency pygobject2
