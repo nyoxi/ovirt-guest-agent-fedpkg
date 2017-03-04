@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 %global _ovirt_version 1.0.13
 
@@ -7,7 +7,7 @@
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.13
-Release: %{release_version}%{?dist}.1
+Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -147,6 +147,8 @@ exit 0
 %post common
 /sbin/udevadm trigger --subsystem-match="virtio-ports" \
     --attr-match="name=com.redhat.rhevm.vdsm"
+/sbin/udevadm trigger --subsystem-match="virtio-ports" \
+    --attr-match="name=ovirt-guest-agent.0"
 
 %if 0%{?fedora} < 18
     /bin/systemctl daemon-reload
@@ -165,14 +167,14 @@ then
         %systemd_preun ovirt-guest-agent.service
     %endif
 
-    # Send an "uninstalled" notification to vdsm.
-    VIRTIO=`grep "^device" %{_sysconfdir}/ovirt-guest-agent.conf | awk '{ print $3; }'`
-    if [ -w $VIRTIO ]
-    then
-        # Non blocking uninstalled notification
-        echo -e '{"__name__": "uninstalled"}\n' | dd of=$VIRTIO \
-            oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
-    fi
+    # non blocking uninstalled notification
+    echo -e '{"__name__": "uninstalled"}\n' | dd \
+        of=/dev/virtio-ports/com.redhat.rhevm.vdsm \
+        oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
+
+    echo -e '{"__name__": "uninstalled"}\n' | dd \
+        of=/dev/virtio-ports/org.ovirt.vdsm \
+        oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
 fi
 
 %postun common
@@ -185,6 +187,8 @@ then
     # Let udev clear access rights
     /sbin/udevadm trigger --subsystem-match="virtio-ports" \
         --attr-match="name=com.redhat.rhevm.vdsm"
+    /sbin/udevadm trigger --subsystem-match="virtio-ports" \
+        --attr-match="name=ovirt-guest-agent.0"
 fi
 
 %if 0%{?fedora} < 18
@@ -228,7 +232,7 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-flush-caches
 %config(noreplace) %{_sysconfdir}/pam.d/diskmapper
-%config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
+%config(noreplace) %attr(644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
@@ -292,6 +296,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Mar 14 2017 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.13-2
+- Added extension for new channel name (Future channel name)
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.13-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
