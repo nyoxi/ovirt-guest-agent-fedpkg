@@ -1,5 +1,5 @@
 
-%global release_version 1
+%global release_version 2
 %global _moduledir /%{_lib}/security
 %global _ovirt_version 1.0.13
 
@@ -13,6 +13,7 @@ Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
 Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{_ovirt_version}.tar.bz2
+Source1: 39-ovirt.rules
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -95,6 +96,7 @@ make %{?_smp_mflags}
 make install DESTDIR=%{buildroot}
 cp gdm-plugin/gdm-ovirtcred.pam %{buildroot}/%{_sysconfdir}/pam.d/gdm-ovirtcred
 mkdir -p %{buildroot}%{_udevrulesdir}
+install -m 0644 %{SOURCE1} %{buildroot}%{_udevrulesdir}/39-ovirt-memory-hotplug.rules
 mv %{buildroot}%{_sysconfdir}/udev/rules.d/55-ovirt-guest-agent.rules %{buildroot}%{_udevrulesdir}/55-ovirt-guest-agent.rules
 sed '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py > %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py.new
 mv %{buildroot}%{_datadir}/ovirt-guest-agent/timezone.py{.new,}
@@ -121,6 +123,9 @@ exit 0
 %post common
 /sbin/udevadm trigger --subsystem-match="virtio-ports" \
     --attr-match="name=com.redhat.rhevm.vdsm"
+/sbin/udevadm trigger --subsystem-match="virtio-ports" \
+    --attr-match="name=ovirt-guest-agent.0"
+/sbin/udevadm trigger --subsystem-match="memory"
 
 %systemd_post ovirt-guest-agent.service
 systemctl enable ovirt-guest-agent.service ||:
@@ -130,14 +135,14 @@ if [ "$1" -eq 0 ]
 then
     %systemd_preun ovirt-guest-agent.service
 
-    # Send an "uninstalled" notification to vdsm.
-    VIRTIO=`grep "^device" %{_sysconfdir}/ovirt-guest-agent.conf | awk '{ print $3; }'`
-    if [ -w $VIRTIO ]
-    then
-        # Non blocking uninstalled notification
-        echo -e '{"__name__": "uninstalled"}\n' | dd of=$VIRTIO \
-            oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
-    fi
+    # non blocking uninstalled notification
+    echo -e '{"__name__": "uninstalled"}\n' | dd \
+        of=/dev/virtio-ports/com.redhat.rhevm.vdsm \
+        oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
+
+    echo -e '{"__name__": "uninstalled"}\n' | dd \
+        of=/dev/virtio-ports/org.ovirt.vdsm \
+        oflag=nonblock status=noxfer conv=nocreat 1>& /dev/null || :
 fi
 
 %postun common
@@ -146,6 +151,8 @@ then
     # Let udev clear access rights
     /sbin/udevadm trigger --subsystem-match="virtio-ports" \
         --attr-match="name=com.redhat.rhevm.vdsm"
+    /sbin/udevadm trigger --subsystem-match="virtio-ports" \
+        --attr-match="name=ovirt-guest-agent.0"
 fi
 
 # New macro for F18+
@@ -183,7 +190,8 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-hibernate
 %config(noreplace) %{_sysconfdir}/pam.d/ovirt-flush-caches
 %config(noreplace) %{_sysconfdir}/pam.d/diskmapper
-%config(noreplace) %attr (644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
+%config(noreplace) %attr(644,root,root) %{_udevrulesdir}/55-ovirt-guest-agent.rules
+%config(noreplace) %attr(644,root,root) %{_udevrulesdir}/39-ovirt-memory-hotplug.rules
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/org.ovirt.vdsm.Credentials.conf
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-logout
 %config(noreplace) %{_sysconfdir}/security/console.apps/ovirt-locksession
@@ -243,6 +251,10 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Tue Mar 14 2017 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.13-2
+- Added udev rule for onlining hotplug memory
+- Added extension for new channel name (Future channel name)
+
 * Tue Feb 07 2017 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.13-1
 - Bump to upstream 1.0.13
 
