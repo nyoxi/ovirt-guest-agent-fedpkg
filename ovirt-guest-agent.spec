@@ -7,7 +7,7 @@
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
 Version: 1.0.13
-Release: %{release_version}%{?dist}.1
+Release: %{release_version}%{?dist}.2
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
@@ -296,6 +296,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.13-2.2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.13-2.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
