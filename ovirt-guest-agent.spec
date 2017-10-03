@@ -40,6 +40,7 @@ Requires: python-ethtool >= 0.4-1
 Requires: udev >= 095-14.23
 Requires: kernel > 2.6.18-238.5.0
 Requires: usermode
+Requires: qemu-guest-agent
 %if 0%{?fedora} >= 18
 Requires(post): systemd
 Requires(preun): systemd
@@ -296,6 +297,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
+* Tue Oct 03 2017 Tomáš Golembiovský <tgolembi@redhat.com> - 1.0.13-3
+- Add dependency on qemu-guest-agent
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.13-2.2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
