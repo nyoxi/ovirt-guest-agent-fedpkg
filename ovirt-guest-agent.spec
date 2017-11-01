@@ -1,18 +1,17 @@
 
-%global release_version 2
+%global release_version 1
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.13
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.13
+Version: 1.0.14
 Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{_ovirt_version}.tar.bz2
+Source0: http://resources.ovirt.org/pub/src/ovirt-guest-agent/%{name}-%{version}.tar.bz2
 Source1: 39-ovirt.rules
 BuildRequires: libtool
 BuildRequires: pam-devel
@@ -81,7 +80,7 @@ The oVirt PAM module provides the functionality necessary to use the
 oVirt automatic log-in system.
 
 %prep
-%setup -q -n ovirt-guest-agent-%{_ovirt_version}
+%setup -q -n ovirt-guest-agent-%{version}
 
 %build
 %configure \
@@ -251,6 +250,10 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/gdm-ovirtcred
 
 %changelog
+* Thu Nov 02 2017 Tomáš Golembiovský <tgolembi@redhat.com> - 1.0.14-1
+- Bump to version 1.0.14
+- Changed link to upstream sources
+
 * Tue Mar 14 2017 Vinzenz Feenstra <evilissimo@redhat.com> - 1.0.13-2
 - Added udev rule for onlining hotplug memory
 - Added extension for new channel name (Future channel name)
