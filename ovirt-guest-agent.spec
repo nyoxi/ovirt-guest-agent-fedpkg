@@ -1,18 +1,17 @@
 
-%global release_version 2
+%global release_version 1
 %global _moduledir /%{_lib}/security
-%global _ovirt_version 1.0.13
 
 # Note this is not building any package
 # There exists no ovirt-guest-agent package
 Name: ovirt-guest-agent
-Version: 1.0.13
-Release: %{release_version}%{?dist}.2
+Version: 1.0.14
+Release: %{release_version}%{?dist}
 Summary: The oVirt Guest Agent
 Group: Applications/System
 License: ASL 2.0
 URL: http://wiki.ovirt.org/wiki/Category:Ovirt_guest_agent
-Source0: http://evilissimo.fedorapeople.org/releases/ovirt-guest-agent/%{version}/%{name}-%{_ovirt_version}.tar.bz2
+Source0: http://resources.ovirt.org/pub/src/ovirt-guest-agent/%{name}-%{version}.tar.bz2
 BuildRequires: libtool
 BuildRequires: pam-devel
 BuildRequires: python2-devel
@@ -107,7 +106,7 @@ The KDM plug-in provides the functionality necessary to use the
 oVirt automatic log-in system.
 
 %prep
-%setup -q -n ovirt-guest-agent-%{_ovirt_version}
+%setup -q -n ovirt-guest-agent-%{version}
 
 %build
 %configure \
@@ -297,7 +296,9 @@ fi
 %attr (755,root,root) %{_libdir}/kde4/kgreet_ovirtcred.so
 
 %changelog
-* Tue Oct 03 2017 Tomáš Golembiovský <tgolembi@redhat.com> - 1.0.13-3
+* Thu Nov 02 2017 Tomáš Golembiovský <tgolembi@redhat.com> - 1.0.14-1
+- Bump to version 1.0.14
+- Changed link to upstream sources
 - Add dependency on qemu-guest-agent
 
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.13-2.2
